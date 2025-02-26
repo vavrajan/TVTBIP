@@ -32,6 +32,9 @@ all_dir = os.path.join(source_dir, 'all')
 fig_dir = os.path.join(source_dir, 'fig')
 output = 'output'
 
+if not os.path.exists(fig_dir):
+    os.mkdir(fig_dir)
+
 scenarios = ['_zero', '_party', '_diverge', '_estimate']
 
 for scenario in scenarios:
