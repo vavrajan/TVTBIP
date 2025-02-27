@@ -5,8 +5,17 @@ data = 'simulation'
 ### First set up directories on the cluster:
 project_dir = os.getcwd()
 source_dir = os.path.join(project_dir, 'data')
-python_dir = os.path.join(project_dir, 'code', 'tbip')
+slurm_dir = os.path.join(project_dir, 'slurm', data)
+out_dir = os.path.join(project_dir, 'out', data)
+err_dir = os.path.join(project_dir, 'err', data)
+python_dir = os.path.join(project_dir, 'analysis')
 
+if not os.path.exists(slurm_dir):
+    os.mkdir(slurm_dir)
+if not os.path.exists(out_dir):
+    os.mkdir(out_dir)
+if not os.path.exists(err_dir):
+    os.mkdir(err_dir)
 
 
 # For now just use the environment for testing.
@@ -14,6 +23,9 @@ python_dir = os.path.join(project_dir, 'code', 'tbip')
 partition = 'gpu'
 
 ### A dictionary of scenarios to be explored
+# Default values correspond with the classical TBIP model (with topic-specific locations) with gamma and CAVI updates.
+# List only the FLAGS that you want to be changed.
+
 # Scenarios
 adds = ['zero', 'party', 'diverge', 'estimate']
 
@@ -22,9 +34,11 @@ for a in adds:
     dataa = data+"-"+a
     ### First set up directories on the cluster:
     project_dir = os.getcwd()
+    source_dir = os.path.join(project_dir, 'data')
     slurm_dir = os.path.join(project_dir, 'slurm', dataa)
     out_dir = os.path.join(project_dir, 'out', dataa)
     err_dir = os.path.join(project_dir, 'err', dataa)
+    python_dir = os.path.join(project_dir, 'analysis')
 
     if not os.path.exists(slurm_dir):
         os.mkdir(slurm_dir)
@@ -44,7 +58,7 @@ for a in adds:
                                        "epsilon": 1e-08,
                                        "learning_rate": 0.01,
                                        "pre_initialize_parameters": pip,
-                                       "max_steps": 100,   # 300000,
+                                       "max_steps": 300000,
                                        "num_topics": 25,
                                        "batch_size": 512,
                                        }
@@ -79,11 +93,11 @@ for a in adds:
                 file.write('ml purge\n')
                 file.write('ml miniconda3-4.10.3-gcc-12.2.0-ibprkvn\n')
                 file.write('\n')
-                file.write('cd /home/jvavra/TVTBIP/\n')
+                file.write('cd /home/jvavra/tbip/\n')
                 # file.write('conda activate env_TBIP\n')
                 file.write('conda activate tf_1_15\n')
                 file.write('\n')
-                file.write('python '+os.path.join(python_dir, 'tbip_different_init.py')+flags+'\n')
+                file.write('python '+os.path.join(project_dir, 'tbip_different_init.py')+flags+'\n')
             # Add a line for running the batch script to the overall slurm job.
             all_file.write('sbatch --dependency=singleton '+os.path.join(slurm_dir, name+'.slurm'))
             all_file.write('\n')

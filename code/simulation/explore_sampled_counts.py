@@ -26,35 +26,34 @@ def main(argv):
 
     ### Setting up directories
     project_dir = os.getcwd()
-    source_dir = os.path.join(project_dir, 'data', FLAGS.simulation)
+    source_dir = os.path.join(project_dir, 'data')
 
-    scenarios = ["_zero", "_party", "_diverge", "_estimate"]
+    scenarios = ["zero", "party", "diverge", "estimate"]
     seed = FLAGS.seed
 
     for s in range(97, 115):
         print('Starting session ' + str(s) + '.')
-        ## Directory setup
-        s_dir = os.path.join(source_dir, str(s))
-        input_dir = os.path.join(s_dir, 'input')
-        output_dir = os.path.join(s_dir, 'output')
-        fig_dir = os.path.join(s_dir, 'fig')
-        if not os.path.exists(fig_dir):
-            os.mkdir(fig_dir)
-
-        ## Load data
-        author_indices = np.load(os.path.join(input_dir, "author_indices.npy")).astype(np.int32)
-        author_data = np.loadtxt(os.path.join(input_dir, "author_map.txt"),
-                                 dtype=str, delimiter=" ", usecols=[0, 1, -1])
-        author_party = np.char.replace(author_data[:, 2], '(', '')
-        author_party = np.char.replace(author_party, ')', '')
-        author_map = np.char.add(author_data[:, 0], author_data[:, 1])
-        document_party = tf.gather(author_party, author_indices)
-        doc_D_indices = tf.where(document_party == 'D')[:, 0]
-        doc_R_indices = tf.where(document_party == 'R')[:, 0]
-
         ## Trigger different scenarios
         for scenario in scenarios:
             print('Scenario = ' + scenario)
+            ## Directory setup
+            s_dir = os.path.join(source_dir, FLAGS.simulation + '-' + scenario + '-' + str(s))
+            input_dir = os.path.join(s_dir, 'clean')
+            fig_dir = os.path.join(s_dir, 'fig')
+            if not os.path.exists(fig_dir):
+                os.mkdir(fig_dir)
+
+            ## Load data
+            author_indices = np.load(os.path.join(input_dir, "author_indices.npy")).astype(np.int32)
+            author_data = np.loadtxt(os.path.join(input_dir, "author_map.txt"),
+                                     dtype=str, delimiter=" ", usecols=[0, 1, -1])
+            author_party = np.char.replace(author_data[:, 2], '(', '')
+            author_party = np.char.replace(author_party, ')', '')
+            author_map = np.char.add(author_data[:, 0], author_data[:, 1])
+            document_party = tf.gather(author_party, author_indices)
+            doc_D_indices = tf.where(document_party == 'D')[:, 0]
+            doc_R_indices = tf.where(document_party == 'R')[:, 0]
+
             counts = sparse.load_npz(os.path.join(input_dir, "counts" + scenario + ".npz"))
             print(counts.shape)
             # aggregate over party
@@ -82,7 +81,7 @@ def main(argv):
             axs[0].hist(tf.gather(dif, tf.where(tf.abs(dif) < 25)[:, 0]))
             axs[1].hist(tf.gather(chi_D, tf.where(tf.abs(chi_D) < 25)[:, 0]))
             axs[2].hist(tf.gather(chi_R, tf.where(tf.abs(chi_R) < 25)[:, 0]))
-            plt.savefig(os.path.join(fig_dir, 'hist_sum_counts' + scenario + '_D_minus_R.pdf'),
+            plt.savefig(os.path.join(fig_dir, 'hist_sum_counts_D_minus_R.pdf'),
                         bbox_inches='tight')  # uncomment to save
             # plt.show()
             plt.close()

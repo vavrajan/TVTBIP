@@ -16,12 +16,13 @@ import matplotlib.cm as cm
 ### Setting up directories
 # project directory
 proj_dir = os.getcwd()
-# data/ directory where different data and all outputs are saved
-data_dir = os.path.join(proj_dir, 'data')
-# data/hein-daily/ directory for the original Hein-Daily database
-orig_dir = os.path.join(data_dir, 'hein-daily')
-plot_dir = os.path.join(data_dir, 'hein-daily-plot')
+# data/hein-daily/ directory where Hein-Daily database and all outputs are saved
+data_dir = os.path.join(proj_dir, 'data', 'hein-daily')
+# data/hein-daily/orig/ directory for the original Hein-Daily database
+orig_dir = os.path.join(data_dir, 'orig')
+plot_dir = os.path.join(data_dir, 'plot')
 num_topics = 25
+output = 'output'
 
 # For grayscale images
 def grey_color_func(word, font_size, position, orientation, random_state=None,
@@ -34,17 +35,17 @@ Rep_mega = []
 Dem_mega = []
 
 for i in range(97, 115):
-    input_dir = os.path.join(data_dir, 'hein-daily-' + str(i), 'clean')
-    tbip_dir = os.path.join(data_dir, 'hein-daily-' + str(i), 'tbip-fits', 'param')
+    input_dir = os.path.join(data_dir, str(i), 'input')
+    tbip_dir = os.path.join(data_dir, str(i), output)
     author_map = np.loadtxt(os.path.join(input_dir, 'author_map.txt'),
                             dtype=str,
                             delimiter='\n',
                             comments='//')
-    ideal_point_loc = np.load(os.path.join(tbip_dir, "ideal_point_loc.npy"))
+    ideal_point_mean = np.load(os.path.join(tbip_dir, "ideal_point_mean.npy"))
     speakers = pd.DataFrame(columns=['speaker_name', 'ideal_point'])
     # create empty df
     speakers['speaker_name'] = author_map
-    speakers['ideal_point'] = ideal_point_loc
+    speakers['ideal_point'] = ideal_point_mean
 
     dems = [] #Democrat Senators
 
@@ -163,7 +164,7 @@ p = pd.DataFrame(columns=['session', 'partisanship'])
 #p['session'] = sessions
 p['session'] = ['97', '98', '99', '100', '101', '102', '103', '104', '105', '106', '107', '108', '109', '110', '111', '112', '113', '114']
 p['partisanship'] = partisanship
-p.to_csv(os.path.join(plot_dir, 'partisanship_by_session.csv'), index=False)
+p.to_csv(os.path.join(data_dir, 'partisanship_by_session.csv'), index=False)
 
 # Topic propagation heatmaps
 
@@ -172,11 +173,11 @@ positive_topics = defaultdict(list)
 negative_topics = defaultdict(list)
 
 for i in range(97, 115):
-    tbip_path = os.path.join(data_dir, 'hein-daily-' + str(i), 'tbip-fits', 'param')
+    tbip_path = os.path.join(data_dir, str(i), output)
     neutral_mean = np.load(os.path.join(tbip_path, 'neutral_topic_mean.npy'))   # log values
     positive_mean = np.load(os.path.join(tbip_path, 'positive_topic_mean.npy'))   # log values
     negative_mean = np.load(os.path.join(tbip_path, 'negative_topic_mean.npy'))
-    ideals = np.load(os.path.join(tbip_path, 'ideal_point_loc.npy'))
+    ideals = np.load(os.path.join(tbip_path, 'ideal_point_mean.npy'))
     t_quantile = np.quantile(ideals, 0.1)
     n_quantile = np.quantile(ideals, 0.9)
     neutral_topics[i] = np.exp(neutral_mean)   # using neutral/negative/positive mean npy files only
@@ -425,11 +426,11 @@ positive_topics = defaultdict(list)
 negative_topics = defaultdict(list)
 
 for i in range(97, 115):
-    tbip_path = os.path.join(data_dir, 'hein-daily-' + str(i), 'tbip-fits', 'param')
+    tbip_path = os.path.join(data_dir, str(i), output)
     neutral_mean = np.load(os.path.join(tbip_path, "neutral_topic_mean.npy"))
     positive_mean = np.load(os.path.join(tbip_path, 'positive_topic_mean.npy'))
     negative_mean = np.load(os.path.join(tbip_path, 'negative_topic_mean.npy'))
-    ideals = np.load(os.path.join(tbip_path, 'ideal_point_loc.npy'))
+    ideals = np.load(os.path.join(tbip_path, 'ideal_point_mean.npy'))
     t_quantile = np.quantile(ideals, 0.1)   # 10th quantile of ideal points
     n_quantile = np.quantile(ideals, 0.9)   # 90th quantile of ideal points
     neutral_topics[i] = np.exp(neutral_mean)
@@ -484,12 +485,12 @@ sess = 97
 # topic = 7   # terrorism
 topic = 24
 
-path = os.path.join(data_dir, 'hein-daily-' + str(sess), 'tbip-fits', 'param')
-eta_p = np.load(os.path.join(path, 'positive_topic_mean.npy'))   # positive
-eta_n = np.load(os.path.join(path, 'negative_topic_mean.npy'))   # negative
-ideals = np.load(os.path.join(path, 'ideal_point_loc.npy'))
-beta = np.load(os.path.join(path, 'neutral_topic_mean.npy'))   # neutral
-ideological_topic_loc = np.load(os.path.join(path, 'ideological_topic_loc.npy'))
+path = data_dir
+eta_p = np.load(os.path.join(path, str(sess), output, 'positive_topic_mean.npy'))   # positive
+eta_n = np.load(os.path.join(path, str(sess), output, 'negative_topic_mean.npy'))   # negative
+ideals = np.load(os.path.join(path, str(sess), output, 'ideal_point_mean.npy'))
+beta = np.load(os.path.join(path, str(sess), output, 'neutral_topic_mean.npy'))   # neutral
+ideological_topic_loc = np.load(os.path.join(path, str(sess), output, 'ideological_topic_loc.npy'))
 
 author_map = pd.read_csv(os.path.join(path, str(sess), 'input', 'author_map.txt'), header=None)
 vocab = pd.read_csv(os.path.join(path, str(sess), 'input', 'vocabulary.txt'), header=None)
@@ -545,11 +546,9 @@ plt.savefig(os.path.join(plot_dir, '113_terrorism_positive.pdf'), bbox_inches='t
 # wordclouds
 
 for sess in range(114, 115):
-    input_dir = os.path.join(data_dir, 'hein-daily-' + str(sess), 'clean')
-    tbip_path = os.path.join(data_dir, 'hein-daily-' + str(sess), 'tbip-fits', 'param')
-    ideals = np.load(os.path.join(tbip_path, 'ideal_point_loc.npy'))
-    vocab = pd.read_csv(os.path.join(input_dir, 'vocabulary.txt'), header=None)
-    beta = np.load(os.path.join(tbip_path, 'neutral_topic_mean.npy'))   # neutral
+    ideals = np.load(os.path.join(data_dir, str(sess), output, 'ideal_point_mean.npy'))
+    vocab = pd.read_csv(os.path.join(data_dir, str(sess) , 'input','vocabulary.txt'), header=None)
+    beta = np.load(os.path.join(data_dir, str(sess), output, 'neutral_topic_mean.npy'))   # neutral
     beta = np.exp(beta)
     t_quantile = np.quantile(ideals, 0.1)   # 10th quantile ideal point
     n_quantile = np.quantile(ideals, 0.9)   # 90th quantile ideal point

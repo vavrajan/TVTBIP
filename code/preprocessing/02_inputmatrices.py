@@ -12,14 +12,14 @@ from collections import defaultdict
 ### Setting up directories
 # project directory
 proj_dir = os.getcwd()
-# data/hein-daily/ directory where Hein-Daily database and all outputs are saved
-data_dir = os.path.join(proj_dir, 'data', 'hein-daily')
-# data/hein-daily/orig/ directory for the original Hein-Daily database
-orig_dir = os.path.join(data_dir, 'orig')
+# data/ directory where different data and all outputs are saved
+data_dir = os.path.join(proj_dir, 'data')
+# data/hein-daily/ directory for the original Hein-Daily database
+orig_dir = os.path.join(data_dir, 'hein-daily')
 
 ### Stopwords
 # predefined set of stopwords saved in "stopwords.txt"
-stopwords = np.loadtxt(os.path.join(data_dir, "stopwords.txt"), dtype=str)
+stopwords = np.loadtxt(os.path.join(orig_dir, "stopwords.txt"), dtype=str)
 # stopwords available at: https://github.com/keyonvafa/tbip/blob/master/setup/stopwords/senate_speeches.txt
 # to be downloaded and saved to data_dir as defined above
 
@@ -35,7 +35,7 @@ min_authors_per_word = 10    # minimum number of senators using a bigram
 # ngram_range = (2, 2)             # bigrams only
 # token_pattern = "[a-zA-Z]+"      # pattern
 # Now it is sufficient to load only the vocabulary
-vocab = pd.read_csv(os.path.join(data_dir, 'vocabulary.txt'), header=None)  # path to complete vocabulary
+vocab = pd.read_csv(os.path.join(orig_dir, 'vocabulary.txt'), header=None)  # path to complete vocabulary
 vocabulary = vocab[0].tolist()   # vocabulary as a list
 
 # Helper function
@@ -58,7 +58,8 @@ for i in range(97, 115):
         session = str(i)
     speeches = pd.read_csv(os.path.join(orig_dir, 'speeches_' + session + '.txt'),
                            encoding="ISO-8859-1", sep="|",  # quoting=3, # without quoting
-                           error_bad_lines = False)  # on_bad_lines='warn')
+                           error_bad_lines = False)
+                           # on_bad_lines='warn')
     description = pd.read_csv(os.path.join(orig_dir, 'descr_' + session + '.txt'),
                               encoding="ISO-8859-1", sep="|")
     speaker_map = pd.read_csv(os.path.join(orig_dir, session + '_SpeakerMap.txt'),
@@ -103,7 +104,7 @@ for i in range(97, 115):
     counts = counts[existing_speeches]
     author_indices = author_indices[existing_speeches]
 
-    input_dir = os.path.join(data_dir, str(i), 'input')
+    input_dir = os.path.join(data_dir, 'hein-daily-' + str(i), 'clean')
     if not os.path.exists(input_dir):
         os.mkdir(input_dir)
 

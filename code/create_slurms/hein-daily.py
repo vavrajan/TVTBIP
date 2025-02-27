@@ -1,25 +1,14 @@
 import os
 
-data_name = 'hein-daily'
+data = 'hein-daily'
 
 ### First set up directories on the cluster:
 project_dir = os.getcwd()
-source_dir = os.path.join(project_dir, 'data', data_name)
-slurm_dir = os.path.join(project_dir, 'slurm')
-out_dir = os.path.join(project_dir, 'out')
-err_dir = os.path.join(project_dir, 'err')
-code_dir = os.path.join(project_dir, 'code')
-
-if not os.path.exists(slurm_dir):
-    os.mkdir(slurm_dir)
-if not os.path.exists(out_dir):
-    os.mkdir(out_dir)
-if not os.path.exists(err_dir):
-    os.mkdir(err_dir)
-
-slurm_dir = os.path.join(project_dir, 'slurm', data_name)
-out_dir = os.path.join(project_dir, 'out', data_name)
-err_dir = os.path.join(project_dir, 'err', data_name)
+source_dir = os.path.join(project_dir, 'data')
+slurm_dir = os.path.join(project_dir, 'slurm', data)
+out_dir = os.path.join(project_dir, 'out', data)
+err_dir = os.path.join(project_dir, 'err', data)
+python_dir = os.path.join(project_dir, 'code', 'tbip')
 
 if not os.path.exists(slurm_dir):
     os.mkdir(slurm_dir)
@@ -33,34 +22,37 @@ if not os.path.exists(err_dir):
 # partition = 'gpu-test'
 partition = 'gpu'
 
-flags_dict = {"scenario": "",
-              "seed2": 0,
-              "data_name": data_name,
-              "eps": 1,
-              "learningrate": 0.0001,
-              "numtopics": 25,
-              "batchsize": 512,
-              "maxsteps": 2500,   # 250000
-              "printsteps": 250,  # 25000
-              }
+### A dictionary of scenarios to be explored
+# Default values correspond with the classical TBIP model (with topic-specific locations) with gamma and CAVI updates.
+# List only the FLAGS that you want to be changed.
 
-### Creating slurm files and one file to trigger all the jobs that go through all sessions (97-114)
+# First scenario
+scenarios = {}
+for s in range(97, 115):
+    if s == 97:
+        pip = 'PF'
+    else:
+        pip = 'previous'
+    scenarios[str(s)] = {"data": data+"-"+str(s),
+                         "previous_data": data+"-"+str(s-1),
+                         "epsilon": 1e-08,
+                         "learning_rate": 0.01,
+                         "pre_initialize_parameters": pip,
+                         "max_steps": 1000,   # 300000,
+                         "num_topics": 25,
+                         "batch_size": 512,
+                         }
+
+### Creating slurm files and one file to trigger all the jobs that continue from previous session to the next (98-114)
 with open(os.path.join(slurm_dir, 'run_all_97_114.slurm'), 'w') as all_file:
     all_file.write('#! /bin/bash\n\n')
-    for s in range(97, 115):
-        if s == 97:
-            # first session initialized with NMF
-            flags = '  --session=' + str(s) + '  --initialization=NMF'
-        else:
-            # other sessions initilized with the estimates from previous session (beta and eta)
-            # theta initialized with non_negative_factorization with betas known
-            flags = '  --session=' + str(s) + '  --initialization=previous'
-        for key in flags_dict:
-            flags = flags + '  --' + key + '=' + str(flags_dict[key])
-
-        with open(os.path.join(slurm_dir, str(s)+'.slurm'), 'w') as file:
+    for name in scenarios:
+        flags = ''
+        for key in scenarios[name]:
+            flags = flags+'  --'+key+'='+str(scenarios[name][key])
+        with open(os.path.join(slurm_dir, name+'.slurm'), 'w') as file:
             file.write('#!/bin/bash\n')
-            file.write('#SBATCH --job-name=' + data_name + ' # short name for your job\n')
+            file.write('#SBATCH --job-name=' + data + ' # short name for your job\n')
             file.write('#SBATCH --partition='+partition+'\n')
 
             # Other potential computational settings.
@@ -83,10 +75,10 @@ with open(os.path.join(slurm_dir, 'run_all_97_114.slurm'), 'w') as all_file:
             file.write('ml miniconda3-4.10.3-gcc-12.2.0-ibprkvn\n')
             file.write('\n')
             file.write('cd /home/jvavra/TVTBIP/\n')
-            # file.write('conda activate env_TBIP\n')
+            # file.write('conda activate tf_TBIP\n')
             file.write('conda activate tf_1_15\n')
             file.write('\n')
-            file.write('python3 '+os.path.join(code_dir, 'analysis', 'estimate_session.py')+flags+'\n')
+            file.write('python '+os.path.join(python_dir, 'tbip_different_init.py')+flags+'\n')
         # Add a line for running the batch script to the overall slurm job.
-        all_file.write('sbatch --dependency=singleton '+os.path.join(slurm_dir, str(s)+'.slurm'))
+        all_file.write('sbatch --dependency=singleton '+os.path.join(slurm_dir, name+'.slurm'))
         all_file.write('\n')

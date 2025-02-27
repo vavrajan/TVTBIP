@@ -27,12 +27,12 @@ def get_ideal(scenario, author_party, ideal, s):
         case "zero":
             return np.zeros(author_party.shape)
         case "party":
-            return 1.0*(author_party == 'D') + 0.0*(author_party == 'I') - 1.0*(author_party == 'R')
+            return 0.5*(author_party == 'D') + 0.0*(author_party == 'I') - 0.5*(author_party == 'R')
         case "diverge":
-            if s <= 104:
+            if s <= 100:
                 return np.zeros(author_party.shape)
             else:
-                return 0.2*(s-104) * (author_party == 'D') + 0.0 * (author_party == 'I') - 0.2*(s-104) * (author_party == 'R')
+                return 0.05*(s-100) * (author_party == 'D') + 0.0 * (author_party == 'I') - 0.05*(s-100) * (author_party == 'R')
         case "estimate":
             return ideal
 
@@ -43,41 +43,28 @@ def main(argv):
     ### Setting up directories
     project_dir = os.getcwd()
     data_dir = os.path.join(project_dir, 'data')
-    source_dir = os.path.join(data_dir, FLAGS.data_name)
-    sim_dir = os.path.join(data_dir, FLAGS.simulation)
-    output = 'output'
 
-    if not os.path.exists(sim_dir):
-        os.mkdir(sim_dir)
+
 
     scenarios = ["zero", "party", "diverge", "estimate"]
     # scenarios = ["estimate"]
     # scenarios = "party"
     seed = FLAGS.seed
 
-    # Betas from the last session used for all sessions
-    neutral_topics = np.load(os.path.join(source_dir, '114', output, "neutral_topic_mean.npy"))
-    beta = neutral_topics
-    positive_topics = np.load(os.path.join(source_dir, '114', output, "positive_topic_mean.npy"))
-    negative_topics = np.load(os.path.join(source_dir, '114', output, "negative_topic_mean.npy"))
-    eta = 10 * 0.5 * (positive_topics - negative_topics)
+    # # Betas from the last session used for all sessions
+    # neutral_topics = np.load(os.path.join(source_dir, '114', output, "neutral_topic_mean.npy"))
+    # beta = neutral_topics
+    # positive_topics = np.load(os.path.join(source_dir, '114', output, "positive_topic_mean.npy"))
+    # negative_topics = np.load(os.path.join(source_dir, '114', output, "negative_topic_mean.npy"))
+    # eta = 0.5 * (positive_topics - negative_topics) # todo try multiplying with 10
 
     for s in range(97, 115):
         print('Starting sampling session ' + str(s) + '.')
+        source_dir = os.path.join(data_dir, FLAGS.data_name + '-' + str(s))
         ## Directory setup
         # original dataset we are trying to imitate
-        in_dir = os.path.join(source_dir, str(s), 'input')
-        ou_dir = os.path.join(source_dir, str(s), output)
-        # newly generated dataset
-        s_dir = os.path.join(sim_dir, str(s))
-        input_dir = os.path.join(s_dir, 'input')
-        output_dir = os.path.join(s_dir, 'output')
-        if not os.path.exists(s_dir):
-            os.mkdir(s_dir)
-        if not os.path.exists(input_dir):
-            os.mkdir(input_dir)
-        if not os.path.exists(output_dir):
-            os.mkdir(output_dir)
+        in_dir = os.path.join(source_dir, 'clean')
+        ou_dir = os.path.join(source_dir, 'tbip-fits', 'param')
 
         ## Load data
         # inputs
@@ -102,12 +89,25 @@ def main(argv):
         negative_topics = np.load(os.path.join(ou_dir, "negative_topic_mean.npy"))
         estimated_ideal = np.load(os.path.join(ou_dir, "ideal_point_mean.npy"))
         eta = 0.5 * (positive_topics - negative_topics)
-        ## Let's try sampled etas
-        # eta_dist = tfp.distributions.normal(location=0, scale=eta.scale)
+        eta[eta < -1] = -1.0  # maybe try 2.0, but 1.0 seems fine
+        eta[eta > 1] = 1.0
 
         ## Trigger different scenarios
         for scenario in scenarios:
             print('Scenario = ' + scenario)
+            sim_dir = os.path.join(data_dir, FLAGS.simulation+'-'+scenario+'-'+str(s))
+            if not os.path.exists(sim_dir):
+                os.mkdir(sim_dir)
+            # newly generated dataset
+            input_dir = os.path.join(sim_dir, 'clean')
+            if not os.path.exists(input_dir):
+                os.mkdir(input_dir)
+
+            # save/copy auxiliary files to clean directories for simulation
+            np.save(os.path.join(input_dir, "author_indices.npy"), author_indices)
+            shutil.copy(os.path.join(in_dir, "author_map.txt"), os.path.join(input_dir, "author_map.txt"))
+            shutil.copy(os.path.join(in_dir, "vocabulary.txt"), os.path.join(input_dir, "vocabulary.txt"))
+
             # Create idealogical positions depending on scenario and session number s
             ideal = tf.cast(tf.constant(get_ideal(scenario, author_party, estimated_ideal, s)), "float32")
             # Get Poisson rates and sum them over topics
@@ -123,7 +123,7 @@ def main(argv):
             print(counts.shape)
             sparse_counts = sparse.csr_matrix(counts)
             print(sparse_counts.shape)
-            sparse.save_npz(os.path.join(input_dir, "counts_" + scenario + ".npz"), sparse_counts)
+            sparse.save_npz(os.path.join(input_dir, "counts.npz"), sparse_counts)
 
         print('Session ' + str(s) + ' finished')
 
