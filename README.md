@@ -55,6 +55,7 @@ The list of the versions of the key libraries is below:
 * tensorflow-gpu         1.15.0
 * tensorflow-probability 0.8.0rc0
 * wordcloud              1.9.2
+
 More details could be found in [requirements_tf_1_15](requirements_tf_1_15.txt).
 
 Depending on the flag `pre_initialize_parameters` you have four options:
@@ -106,8 +107,7 @@ Moreover, it gathers some data from all sessions into one dataset:
 * `ideal_points_all_sessions.csv` - ideal points for all speakers and all sessions combined (empty if speaker not present),
 * `speeches_by_speaker.csv` - data on speeches included within the analysis including information about the speakers,
 * `speeches_by_preprocessed_speakers` - number of speeches given by a speaker in each session,
-* `posneg_cs.csv` - cosine similarity between positive and negative topics for each topic and session
-* `` - 
+* `posneg_cs.csv` - cosine similarity between positive and negative topics for each topic and session.
 
 File [02_plots](code/analysis/02_plots.py) creates descriptive plots such as:
 * boxplots of democratic and republican senator ideological positions in time,
