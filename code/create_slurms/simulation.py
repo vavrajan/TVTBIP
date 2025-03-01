@@ -36,7 +36,7 @@ for a in adds:
     scenarios = {}
     for s in range(97, 115):
         if s == 97:
-            pip = 'PF'
+            pip = 'NMF'
         else:
             pip = 'previous'
         scenarios[a + "-" + str(s)] = {"data": dataa + "-" + str(s),
@@ -44,7 +44,7 @@ for a in adds:
                                        "epsilon": 1e-08,
                                        "learning_rate": 0.01,
                                        "pre_initialize_parameters": pip,
-                                       "max_steps": 100,   # 300000,
+                                       "max_steps": 300000,   # 100,
                                        "num_topics": 25,
                                        "batch_size": 512,
                                        }

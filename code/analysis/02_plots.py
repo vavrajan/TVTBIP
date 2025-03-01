@@ -35,7 +35,7 @@ Dem_mega = []
 
 for i in range(97, 115):
     input_dir = os.path.join(data_dir, 'hein-daily-' + str(i), 'clean')
-    tbip_dir = os.path.join(data_dir, 'hein-daily-' + str(i), 'tbip-fits', 'param')
+    tbip_dir = os.path.join(data_dir, 'hein-daily-' + str(i), 'tbip-fits', 'params')
     author_map = np.loadtxt(os.path.join(input_dir, 'author_map.txt'),
                             dtype=str,
                             delimiter='\n',
@@ -172,7 +172,7 @@ positive_topics = defaultdict(list)
 negative_topics = defaultdict(list)
 
 for i in range(97, 115):
-    tbip_path = os.path.join(data_dir, 'hein-daily-' + str(i), 'tbip-fits', 'param')
+    tbip_path = os.path.join(data_dir, 'hein-daily-' + str(i), 'tbip-fits', 'params')
     neutral_mean = np.load(os.path.join(tbip_path, 'neutral_topic_mean.npy'))   # log values
     positive_mean = np.load(os.path.join(tbip_path, 'positive_topic_mean.npy'))   # log values
     negative_mean = np.load(os.path.join(tbip_path, 'negative_topic_mean.npy'))
@@ -425,7 +425,7 @@ positive_topics = defaultdict(list)
 negative_topics = defaultdict(list)
 
 for i in range(97, 115):
-    tbip_path = os.path.join(data_dir, 'hein-daily-' + str(i), 'tbip-fits', 'param')
+    tbip_path = os.path.join(data_dir, 'hein-daily-' + str(i), 'tbip-fits', 'params')
     neutral_mean = np.load(os.path.join(tbip_path, "neutral_topic_mean.npy"))
     positive_mean = np.load(os.path.join(tbip_path, 'positive_topic_mean.npy'))
     negative_mean = np.load(os.path.join(tbip_path, 'negative_topic_mean.npy'))
@@ -484,15 +484,16 @@ sess = 97
 # topic = 7   # terrorism
 topic = 24
 
-path = os.path.join(data_dir, 'hein-daily-' + str(sess), 'tbip-fits', 'param')
-eta_p = np.load(os.path.join(path, 'positive_topic_mean.npy'))   # positive
-eta_n = np.load(os.path.join(path, 'negative_topic_mean.npy'))   # negative
-ideals = np.load(os.path.join(path, 'ideal_point_loc.npy'))
-beta = np.load(os.path.join(path, 'neutral_topic_mean.npy'))   # neutral
-ideological_topic_loc = np.load(os.path.join(path, 'ideological_topic_loc.npy'))
+path = os.path.join(data_dir, 'hein-daily-' + str(sess))
+tbip = os.path.join(path, 'tbip-fits', 'params')
+eta_p = np.load(os.path.join(tbip, 'positive_topic_mean.npy'))   # positive
+eta_n = np.load(os.path.join(tbip, 'negative_topic_mean.npy'))   # negative
+ideals = np.load(os.path.join(tbip, 'ideal_point_loc.npy'))
+beta = np.load(os.path.join(tbip, 'neutral_topic_mean.npy'))   # neutral
+ideological_topic_loc = np.load(os.path.join(tbip, 'ideological_topic_loc.npy'))
 
-author_map = pd.read_csv(os.path.join(path, str(sess), 'input', 'author_map.txt'), header=None)
-vocab = pd.read_csv(os.path.join(path, str(sess), 'input', 'vocabulary.txt'), header=None)
+author_map = pd.read_csv(os.path.join(path, 'clean', 'author_map.txt'), header=None)
+vocab = pd.read_csv(os.path.join(path, 'clean', 'vocabulary.txt'), header=None)
 topic_terms = pd.DataFrame(columns = ['index', 'bigram', 't', 'n'])
 topic_terms['index'] = np.arange(len(vocab))
 topic_terms['bigram'] = vocab[0]
@@ -546,7 +547,7 @@ plt.savefig(os.path.join(plot_dir, '113_terrorism_positive.pdf'), bbox_inches='t
 
 for sess in range(114, 115):
     input_dir = os.path.join(data_dir, 'hein-daily-' + str(sess), 'clean')
-    tbip_path = os.path.join(data_dir, 'hein-daily-' + str(sess), 'tbip-fits', 'param')
+    tbip_path = os.path.join(data_dir, 'hein-daily-' + str(sess), 'tbip-fits', 'params')
     ideals = np.load(os.path.join(tbip_path, 'ideal_point_loc.npy'))
     vocab = pd.read_csv(os.path.join(input_dir, 'vocabulary.txt'), header=None)
     beta = np.load(os.path.join(tbip_path, 'neutral_topic_mean.npy'))   # neutral

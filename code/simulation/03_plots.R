@@ -1,20 +1,24 @@
 require("ggplot2")
 require("tidyverse")
 
-ROOT = "C:/Users/jvavra/OneDrive - WU Wien/Documents/TVTBIP/"
+# ROOT = "C:/Users/jvavra/OneDrive - WU Wien/Documents/TVTBIP/"
+ROOT = "C:/Users/Vavra/PycharmProjects/TVTBIP/"
 DAT = paste0(ROOT, "data/")
-FIG = paste0(DAT, "simulation/")
-data_names = c('simulation-zero_', 'simulation-party_',
-               'simulation-diverge_', 'simulation-estimate_')
+SIM = paste0(DAT, "simulation/")
+FIG = paste0(SIM, "plot/")
+data_names = c('simulation-zero', 'simulation-party',
+               'simulation-diverge', 'simulation-estimate')
 if(!dir.exists(FIG)){
   dir.create(FIG)
 }
+
+max_session = 114
 
 DF3 <- part <- list()
 
 for(data_name in data_names){
 
-  DF <- read.csv(paste0(FIG, data_name, "ideal_points_all_sessions_rescaledIQR.csv"),
+  DF <- read.csv(paste0(SIM, data_name, "_ideal_points_all_sessions_rescaledIQR.csv"),
                  header = TRUE, sep = ",")
 
   #colnames(DF)[1] <- "Party"
@@ -69,11 +73,11 @@ for(data_name in data_names){
     xlab("Years (Session)") +
     ylim(-1, 1) +
     theme_bw() +
-    theme(legend.position = c(0.005, 0.99),
+    theme(legend.position.inside = c(0.005, 0.99),
           legend.justification = c("left", "top"),
           legend.title = element_blank())
 
-  ggsave(paste0(FIG, data_name, "boxplots_R_vs_D_rescaledIQR.pdf"),
+  ggsave(paste0(FIG, data_name, "_boxplots_R_vs_D_rescaledIQR.pdf"),
          width = 20, height = 14, units = "cm")
 
   ########## estimate partisanship for each session
@@ -127,7 +131,7 @@ for(data_name in data_names){
     scale_y_continuous(limits = c(-0.15, 1.35)) +
     theme_bw()
 
-  ggsave(paste0(FIG, data_name, "partisanship_rescaledIQR.pdf"),
+  ggsave(paste0(FIG, data_name, "_partisanship_rescaledIQR.pdf"),
          width = 20, height = 14, units = "cm")
 }
 

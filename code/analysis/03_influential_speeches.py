@@ -19,7 +19,7 @@ orig_dir = os.path.join(data_dir, 'hein-daily')
 plot_dir = os.path.join(data_dir, 'hein-daily-plot')
 num_topics = 25
 i = 107
-param_dir = os.path.join(data_dir, 'hein-daily-'+str(i), 'tbip-fits', 'param')
+param_dir = os.path.join(data_dir, 'hein-daily-'+str(i), 'tbip-fits', 'params')
 
 
 # this codejunk is only to create raw_documents.txt
@@ -139,12 +139,12 @@ clean_dir = os.path.join(data_dir, 'hein-daily-'+str(i), 'clean')
 
 
 # Load TBIP parameters.
-document_mean = np.load(os.path.join(param_dir, "document_topic_mean.npy"))
+document_mean = np.load(os.path.join(param_dir, "document_mean.npy"))
 objective_topic_loc = np.load(os.path.join(param_dir, "objective_topic_loc.npy"))
 objective_topic_scale = np.load(os.path.join(param_dir, "objective_topic_scale.npy"))
 ideological_topic_loc = np.load(os.path.join(param_dir, "ideological_topic_loc.npy"))
 ideological_topic_scale = np.load(os.path.join(param_dir, "ideological_topic_scale.npy"))
-ideal_point_mean = np.load(os.path.join(param_dir, "ideal_point_mean.npy"))
+ideal_point_loc = np.load(os.path.join(param_dir, "ideal_point_loc.npy"))
 
 objective_topic_mean = np.exp(objective_topic_loc + objective_topic_scale ** 2 / 2)
 
@@ -156,7 +156,7 @@ raw_documents.shape
 verbosity_weights = utils.get_verbosity_weights(counts, author_indices)
 smith_top_indices, smith_top_words = utils.compute_likelihood_ratio(
     "Gordon Smith (R)",
-    ideal_point_mean,
+    ideal_point_loc,
     counts,
     vocabulary,
     author_indices,

@@ -29,6 +29,9 @@ import sys
 project_dir = os.getcwd()
 source_dir = os.path.join(project_dir, 'data')
 sim_dir = os.path.join(source_dir, 'simulation')
+plot_dir = os.path.join(sim_dir, 'plot')
+if not os.path.exists(plot_dir):
+    os.mkdir(plot_dir)
 
 scenarios = ['zero', 'party', 'diverge', 'estimate']
 
@@ -39,11 +42,11 @@ for scenario in scenarios:
     negative_topics = defaultdict(list)
 
     for i in range(97, 115):
-        tbip_path = os.path.join(source_dir, 'simulation-' + scenario + '-' + str(i), 'tbip-fits', 'param')
+        tbip_path = os.path.join(source_dir, 'simulation-' + scenario + '-' + str(i), 'tbip-fits', 'params')
         neutral_mean = np.load(os.path.join(tbip_path, 'neutral_topic_mean.npy'))   # log values
         positive_mean = np.load(os.path.join(tbip_path, 'positive_topic_mean.npy'))   # log values
         negative_mean = np.load(os.path.join(tbip_path, 'negative_topic_mean.npy'))
-        ideals = np.load(os.path.join(tbip_path, 'ideal_point_mean.npy'))
+        ideals = np.load(os.path.join(tbip_path, 'ideal_point_loc.npy'))
         t_quantile = np.quantile(ideals, 0.1)
         n_quantile = np.quantile(ideals, 0.9)
         neutral_topics[i] = np.exp(neutral_mean)   # using neutral/negative/positive mean npy files only
@@ -125,7 +128,7 @@ for scenario in scenarios:
     # secax_y2.set_yticklabels(y_labs, ha='left')
     # secax_y2.tick_params(axis='y', pad=120)
 
-    plt.savefig(os.path.join(sim_dir, 'sorted_neutral_topics_cs_noscale_' + scenario + '.pdf'), bbox_inches='tight')  # uncomment to save
+    plt.savefig(os.path.join(plot_dir, 'sorted_neutral_topics_cs_noscale_' + scenario + '.pdf'), bbox_inches='tight')  # uncomment to save
     # plt.show()
     plt.close()
     # bright = closer, dark = farther
@@ -182,7 +185,7 @@ for scenario in scenarios:
     secax_y2.set_yticklabels(y_labs, ha='left')
     secax_y2.tick_params(axis='y', pad=120)
 
-    plt.savefig(os.path.join(sim_dir, 'pos_vs_neg_topics_cs_sorted_by_neu_' + scenario + '.pdf'),
+    plt.savefig(os.path.join(plot_dir, 'pos_vs_neg_topics_cs_sorted_by_neu_' + scenario + '.pdf'),
                 bbox_inches='tight')  # uncomment to save
     # plt.show()
     plt.close()

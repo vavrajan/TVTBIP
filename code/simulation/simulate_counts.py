@@ -64,7 +64,7 @@ def main(argv):
         ## Directory setup
         # original dataset we are trying to imitate
         in_dir = os.path.join(source_dir, 'clean')
-        ou_dir = os.path.join(source_dir, 'tbip-fits', 'param')
+        ou_dir = os.path.join(source_dir, 'tbip-fits', 'params')
 
         ## Load data
         # inputs
@@ -75,11 +75,11 @@ def main(argv):
         author_party = np.char.replace(author_party, ')', '')
         author_map = np.char.add(author_data[:, 0], author_data[:, 1])
         # save them to input files for simulation
-        np.save(os.path.join(input_dir, "author_indices.npy"), author_indices)
+        # np.save(os.path.join(input_dir, "author_indices.npy"), author_indices)
         # np.savetxt(os.path.join(input_dir, "author_map.txt"), author_map, fmt="%s")
 
-        shutil.copy(os.path.join(in_dir, "author_map.txt"), os.path.join(input_dir, "author_map.txt"))
-        shutil.copy(os.path.join(in_dir, "vocabulary.txt"), os.path.join(input_dir, "vocabulary.txt"))
+        # shutil.copy(os.path.join(in_dir, "author_map.txt"), os.path.join(input_dir, "author_map.txt"))
+        # shutil.copy(os.path.join(in_dir, "vocabulary.txt"), os.path.join(input_dir, "vocabulary.txt"))
 
         # model parameters
         theta = tf.cast(tf.constant(pd.read_csv(os.path.join(ou_dir, "thetas.csv"), index_col=0).to_numpy()), "float32")
@@ -87,7 +87,7 @@ def main(argv):
         beta = neutral_topics
         positive_topics = np.load(os.path.join(ou_dir, "positive_topic_mean.npy"))
         negative_topics = np.load(os.path.join(ou_dir, "negative_topic_mean.npy"))
-        estimated_ideal = np.load(os.path.join(ou_dir, "ideal_point_mean.npy"))
+        estimated_ideal = np.load(os.path.join(ou_dir, "ideal_point_loc.npy"))
         eta = 0.5 * (positive_topics - negative_topics)
         eta[eta < -1] = -1.0  # maybe try 2.0, but 1.0 seems fine
         eta[eta > 1] = 1.0

@@ -407,7 +407,8 @@ def main(argv):
     tf.set_random_seed(FLAGS.seed)
     random_state = np.random.RandomState(FLAGS.seed)
 
-    project_dir = os.path.abspath(os.path.dirname(__file__))
+    # project_dir = os.path.abspath(os.path.dirname(__file__))
+    project_dir = os.getcwd()
     source_dir = os.path.join(project_dir, "data", FLAGS.data)
     prev_dir = os.path.join(project_dir, "data", FLAGS.previous_data)
     # As described in the docstring, the data directory must have the following

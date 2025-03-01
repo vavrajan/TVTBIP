@@ -26,9 +26,9 @@ If you wish to use TVTBIP for your own dataset, you need to keep the following s
   * [clean](data/hein-daily-97/clean) the clean inputs for the TVTBIP, which should contain:
     * `counts.npz` - the document-term matrix in sparse format,
     * `author_indices.npy` - vector of author indices declaring who is the author of the corresponding document,
-    * `author_maptxt.` - name and surname of the speaker followed by party label in parentheses (one per line),
+    * `author_map.txt` - name and surname of the speaker followed by party label in parentheses (one per line),
     * `vocabulary.txt` - list of words (one per line) that should be common to all sessions for TVTBIP,
-  * [pf-fits](data/hein-daily-97/pf-fits) the initial parameter values estimated with Poisson factorization
+  * [pf-fits](data/hein-daily-97/pf-fits) the initial parameter values estimated with Poisson factorization for the first time period,
   * [tbip-fits](data/hein-daily-97/tbip-fits) outputs of the TVTBIP, which will contain subdirectory `param` with estimated parameter values.
 
 ### Estimating TVTBIP

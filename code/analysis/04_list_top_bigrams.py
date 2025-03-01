@@ -27,8 +27,8 @@ num_topics = 25
 df1 = pd.DataFrame()
 for sess in range(97, 115):
     input_dir = os.path.join(data_dir, 'hein-daily-' + str(sess), 'clean')
-    output_dir = os.path.join(data_dir, 'hein-daily-' + str(sess), 'tbip-fits', 'param')
-    ideals = np.load(os.path.join(output_dir, 'ideal_point_mean.npy'))
+    output_dir = os.path.join(data_dir, 'hein-daily-' + str(sess), 'tbip-fits', 'params')
+    ideals = np.load(os.path.join(output_dir, 'ideal_point_loc.npy'))
     vocab = pd.read_csv(os.path.join(input_dir, 'vocabulary.txt'), header=None)
     # To be uncommented accordingly
     # for neutral_10_bigrams.csv

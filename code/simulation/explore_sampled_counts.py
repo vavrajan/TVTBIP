@@ -54,7 +54,7 @@ def main(argv):
             doc_D_indices = tf.where(document_party == 'D')[:, 0]
             doc_R_indices = tf.where(document_party == 'R')[:, 0]
 
-            counts = sparse.load_npz(os.path.join(input_dir, "counts" + scenario + ".npz"))
+            counts = sparse.load_npz(os.path.join(input_dir, "counts.npz"))
             print(counts.shape)
             # aggregate over party
             counts_D = counts[doc_D_indices, ]

@@ -42,7 +42,6 @@ for data in ['simulation-zero', 'simulation-party', 'simulation-diverge', 'simul
         source_dir = os.path.join(data_dir, data_name)
         clean_dir = os.path.join(source_dir, 'clean')
         tbip_dir = os.path.join(source_dir, 'tbip-fits', 'params')
-        input_dir = os.path.join(orig_dir, str(s), 'input')
 
         # simulated data
         ideal_point_loc = np.load(os.path.join(tbip_dir, "ideal_point_loc.npy"))
@@ -51,8 +50,8 @@ for data in ['simulation-zero', 'simulation-party', 'simulation-diverge', 'simul
         sim_eta_scl = np.quantile(eta_loc, 0.75) - np.quantile(eta_loc, 0.25)
 
         # orig data
-        positive_topics = np.load(os.path.join(input_dir, "positive_topic_mean.npy"))
-        negative_topics = np.load(os.path.join(input_dir, "negative_topic_mean.npy"))
+        positive_topics = np.load(os.path.join(tbip_dir, "positive_topic_mean.npy"))
+        negative_topics = np.load(os.path.join(tbip_dir, "negative_topic_mean.npy"))
         eta = 0.5 * (positive_topics - negative_topics)
         # orig_eta_scl = np.std(eta)
         orig_eta_scl = np.quantile(eta, 0.75) - np.quantile(eta, 0.25)

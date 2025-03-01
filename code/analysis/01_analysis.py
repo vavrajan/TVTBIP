@@ -26,11 +26,11 @@ num_topics = 25
 
 for sess in range(97, 115):
     clean_dir = os.path.join(data_dir, 'hein-daily-' + str(sess), 'clean')
-    save_dir = os.path.join(data_dir, 'hein-daily-'+str(sess), 'tbip-fits', 'param')
+    save_dir = os.path.join(data_dir, 'hein-daily-'+str(sess), 'tbip-fits', 'params')
     topics = []
     bigram_index = []
     objective_topic_loc = np.load(os.path.join(save_dir, "objective_topic_loc.npy"))
-    document_topic_mean = np.load(os.path.join(save_dir, "document_topic_mean.npy"))
+    document_mean = np.load(os.path.join(save_dir, "document_mean.npy"))
     itl = np.load(os.path.join(save_dir, "ideological_topic_loc.npy"))
     ideal_point_loc = np.load(os.path.join(save_dir, "ideal_point_loc.npy"))
     beta = objective_topic_loc
@@ -76,7 +76,7 @@ for sess in range(97, 115):
     df.to_csv(os.path.join(save_dir, 'betas.csv'), index=True)
 
     #thetas
-    theta_df = document_topic_mean
+    theta_df = document_mean
     pd.DataFrame(theta_df).to_csv(os.path.join(save_dir, 'thetas.csv'), index=True)
 
     #eta
@@ -225,12 +225,12 @@ df1.to_csv(os.path.join(plot_dir, 'speeches_by_speakers.csv'), index=False)
 #new_df = df_1[df_1.speaker.isin(senators)]
 #new_df.to_csv(os.path.join(plot_dir, 'speeches_by_preprocessed_speakers.csv', index = False))
 
-ip = pd.read_csv(os.path.join(data_dir, 'hein-daily-'+str(97), 'tbip-fits', 'param', 'ideal_point_speakers.csv'))
+ip = pd.read_csv(os.path.join(data_dir, 'hein-daily-'+str(97), 'tbip-fits', 'params', 'ideal_point_speakers.csv'))
 ip.columns = ['Index', 'speaker', 97]
 #ip = ip.drop(columns=ip.columns[0], axis=1, inplace=True)
 
 for sess in range(98, 115):
-    df = pd.read_csv(os.path.join(data_dir, 'hein-daily-'+str(sess), 'tbip-fits', 'param', 'ideal_point_speakers.csv'))
+    df = pd.read_csv(os.path.join(data_dir, 'hein-daily-'+str(sess), 'tbip-fits', 'params', 'ideal_point_speakers.csv'))
     df.drop(columns=df.columns[0], axis=1, inplace=True)
     df.columns = ['speaker', sess]
     print(df.shape)
@@ -258,8 +258,7 @@ positive_topics = defaultdict(list)
 negative_topics = defaultdict(list)
 
 for i in range(97, 115):
-    tbip_path = os.path.join(os.path.join(data_dir, 'hein-daily-'+str(sess), 'tbip-fits', 'param',
-                                          'ideal_point_speakers.csv'))   # tbip directory with output files
+    tbip_path = os.path.join(os.path.join(data_dir, 'hein-daily-'+str(sess), 'tbip-fits', 'params'))   # tbip directory with output files
     positive_mean = np.load(os.path.join(tbip_path, 'positive_topic_mean.npy'))
     negative_mean = np.load(os.path.join(tbip_path, 'negative_topic_mean.npy'))
     positive_topics[i] = np.exp(positive_mean)
