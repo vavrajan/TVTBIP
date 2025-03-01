@@ -1,0 +1,91 @@
+absl-py @ file:///work/ci_py311/absl-py_1676838931475/work
+appdirs==1.4.4
+astunparse==1.6.3
+Bottleneck @ file:///work/ci_py311/bottleneck_1676827011612/work
+brotlipy==0.7.0
+cachetools==5.3.0
+certifi==2023.5.7
+cffi @ file:///work/ci_py311/cffi_1676822533496/work
+chardet @ file:///work/ci_py311/chardet_1676830276092/work
+charset-normalizer==3.1.0
+cloudpickle @ file:///croot/cloudpickle_1683040006038/work
+contourpy @ file:///work/ci_py311/contourpy_1676827066340/work
+cryptography @ file:///work/ci_py311_2/cryptography_1679335572456/work
+cycler @ file:///tmp/build/80754af9/cycler_1637851556182/work
+decorator @ file:///opt/conda/conda-bld/decorator_1643638310831/work
+dm-tree @ file:///work/ci_py311/dm-tree_1676839714966/work
+flatbuffers==23.3.3
+fonttools==4.25.0
+gast @ file:///tmp/build/80754af9/gast_1637837472536/work
+google-auth==2.17.3
+google-auth-oauthlib==1.0.0
+google-pasta==0.2.0
+grpcio==1.54.0
+h5py==3.8.0
+idna @ file:///work/ci_py311/idna_1676822698822/work
+jax==0.4.8
+joblib @ file:///work/ci_py311/joblib_1676837020463/work
+keras==2.12.0
+kiwisolver @ file:///work/ci_py311/kiwisolver_1676827230232/work
+libclang==16.0.0
+Markdown==3.4.3
+MarkupSafe==2.1.2
+matplotlib @ file:///croot/matplotlib-suite_1679593461707/work
+mkl-fft==1.3.1
+mkl-random @ file:///work/ci_py311/mkl_random_1676828032909/work
+mkl-service==2.4.0
+ml-dtypes==0.1.0
+munkres==1.1.4
+numexpr @ file:///work/ci_py311_2/numexpr_1679336657660/work
+numpy==1.23.5
+nvidia-cublas-cu11==11.11.3.6
+nvidia-cublas-cu12==12.1.3.1
+nvidia-cuda-runtime-cu12==12.1.105
+nvidia-cudnn-cu11==8.6.0.163
+nvidia-cudnn-cu12==8.9.1.23
+nvidia-dali-cuda110==1.25.0
+oauthlib==3.2.2
+opt-einsum==3.3.0
+packaging @ file:///croot/packaging_1678965309396/work
+pandas==1.5.3
+Pillow==9.4.0
+ply==3.11
+pooch @ file:///tmp/build/80754af9/pooch_1623324770023/work
+protobuf==4.22.4
+psutil==5.9.5
+pyasn1==0.5.0
+pyasn1-modules==0.3.0
+pycparser @ file:///tmp/build/80754af9/pycparser_1636541352034/work
+pyOpenSSL @ file:///croot/pyopenssl_1678965284384/work
+pyparsing @ file:///work/ci_py311/pyparsing_1677811559502/work
+PyQt5-sip==12.11.0
+pyreadr==0.5.0
+PySocks @ file:///work/ci_py311/pysocks_1676822712504/work
+python-dateutil @ file:///tmp/build/80754af9/python-dateutil_1626374649649/work
+pytz @ file:///work/ci_py311/pytz_1676825004346/work
+requests==2.30.0
+requests-oauthlib==1.3.1
+rsa==4.9
+scikit-learn @ file:///croot/scikit-learn_1680198742267/work
+scipy==1.10.1
+seaborn==0.12.2
+sip @ file:///work/ci_py311/sip_1676825117084/work
+six @ file:///tmp/build/80754af9/six_1644875935023/work
+tensorboard==2.12.3
+tensorboard-data-server==0.7.0
+tensorflow==2.12.0
+tensorflow-estimator==2.12.0
+tensorflow-io-gcs-filesystem==0.32.0
+tensorflow-probability==0.20.0
+tensorrt @ file:///opt/apps/TensorRT-8.6.1.6/python/tensorrt-8.6.1-cp311-none-linux_x86_64.whl
+tensorrt-bindings==8.6.1
+tensorrt-libs==8.6.1
+termcolor==2.3.0
+threadpoolctl @ file:///Users/ktietz/demo/mc3/conda-bld/threadpoolctl_1629802263681/work
+toml @ file:///tmp/build/80754af9/toml_1616166611790/work
+tornado @ file:///work/ci_py311/tornado_1676823418767/work
+typing_extensions==4.5.0
+urllib3==2.0.2
+Werkzeug==2.3.3
+wordcloud==1.9.1.1
+wrapt==1.14.1
