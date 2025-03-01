@@ -40,7 +40,7 @@ but the initialization process is adjusted to reflect our
 time-varying version. 
 Both were designed for Tensorflow version 1.15 which 
 substantially differs from the newer version.
-The list of the versions of used libraries is below:
+The list of the versions of the key libraries is below:
 * absl-py                1.4.0 
 * matplotlib             3.3.4 
 * numpy                  1.19.5 
@@ -55,6 +55,7 @@ The list of the versions of used libraries is below:
 * tensorflow-gpu         1.15.0
 * tensorflow-probability 0.8.0rc0
 * wordcloud              1.9.2
+More details could be found in [requirements_tf_1_15](requirements_tf_1_15.txt).
 
 Depending on the flag `pre_initialize_parameters` you have four options:
 * `random` - initialize model parameters completely at random, which we do not recommend,
@@ -151,6 +152,9 @@ All of these are on log scale so the Poisson rates are reconstructed as
 * `party` - ideal point is -0.5 for Republicans, 0.5 for Democrats and 0 for Independent senators,
 * `diverge` - zero ideal points until session 100, then increase or decrease by 0.05 for each additional session towards the political party,
 * `estimate` - use the estimated ideological positions for corresponding session.
+
+Note that for the generating we already used a newer version of Tensorflow,
+see [requirements_tf_TBIP](requirements_tf_TBIP.txt).
 
 #### Estimating TVTBIP on simulated data
 
