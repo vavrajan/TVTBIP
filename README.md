@@ -1,35 +1,35 @@
 # Time Varying Text-Based Ideal Point Model
 Source code for the paper: 
-[Revisiting Group Differences in High-Dimensional Choices: Methods and Application to Congressional Speech by Paul Hofmarcher, Jan Vávra, Sourav Adhikari, and Bettina Grün (2025)](link).
+[Revisiting Group Differences in High-Dimensional Choices: Methods and Application to Congressional Speech by Paul Hofmarcher, Jan Vávra, Sourav Adhikari, and Bettina Grün (2025)](https://arxiv.org/abs/2206.10877v2).
 
 This repository contains the code for
 * preprocessing the [Hein-Daily](https://data.stanford.edu/congress_text) dataset of congressional speeches,
 * estimating TBIP provided by [Keyon Vafa](https://github.com/keyonvafa/tbip),
 * estimating our Time-Varying version of TBIP,
-* simulation study that imitates the original dataset.
+* performing the simulation study that imitates the original dataset.
 
 ### Data preparation
 
 In order to perform the analysis of the congressional speeches, please:
 * download the data `hein-daily.zip` from [Hein-Daily](https://data.stanford.edu/congress_text),
 * unzip them into the directory [data/hein-daily](data/hein-daily),
-* add your own file with [stopwords](data/hein-daily/stopwords.txt) (ours copied from [Keyon Vafa](https://github.com/keyonvafa/tbip)),
+* add your own file with [stopwords](data/hein-daily/stopwords.txt) (ours is copied from [Keyon Vafa](https://github.com/keyonvafa/tbip)),
 * run the two scripts in `code/preprocessing`: 
-  * [01_supervocab.py](code/preprocessing/01_supervocab.py) to create vocabulary that spans all sessions,
-  * [02_inputmatrices.py](code/preprocessing/02_inputmatrices.py) to create the count matrices and other required files.
+  * [01_supervocab.py](code/preprocessing/01_supervocab.py) creates the vocabulary that spans all sessions.
+  * [02_inputmatrices.py](code/preprocessing/02_inputmatrices.py) creates the count matrices and other required files.
 
 If you wish to use TVTBIP for your own dataset, you need to keep the following structure:
-* `data/your-data-name` should be the directory with the original data format
-* `data/your-data-name-number` should store both clean data and the estimates from TVTBIP for time period with this number
-  * for `hein-daily` we have [97](data/hein-daily-97), ..., [114](data/hein-daily-114)
-* within the subdirectory for a time period should be two subdirectories to store:
-  * [clean](data/hein-daily-97/clean) the clean inputs for the TVTBIP, which should contain:
+* `data/your-data-name` should be the directory containing the data in the original format.
+* `data/your-data-name-number` should store both, the clean inputs and the estimates from TVTBIP for time period with this number:
+  * for `hein-daily` we have [97](data/hein-daily-97), ..., [114](data/hein-daily-114).
+* Within the subdirectory for a time period there should be two subdirectories to store:
+  * [clean](data/hein-daily-97/clean) with the clean inputs for the TVTBIP, which should contain:
     * `counts.npz` - the document-term matrix in sparse format,
     * `author_indices.npy` - vector of author indices declaring who is the author of the corresponding document,
     * `author_map.txt` - name and surname of the speaker followed by party label in parentheses (one per line),
     * `vocabulary.txt` - list of words (one per line) that should be common to all sessions for TVTBIP,
-  * [pf-fits](data/hein-daily-97/pf-fits) the initial parameter values estimated with Poisson factorization for the first time period,
-  * [tbip-fits](data/hein-daily-97/tbip-fits) outputs of the TVTBIP, which will contain subdirectory `param` with estimated parameter values.
+  * [pf-fits](data/hein-daily-97/pf-fits) with the initial parameter values estimated with Poisson factorization for the first time period,
+  * [tbip-fits](data/hein-daily-97/tbip-fits) with outputs of the TVTBIP, containing subdirectory `param` with estimated parameter values.
 
 ### Estimating TVTBIP
 
@@ -40,7 +40,7 @@ but the initialization process is adjusted to reflect our
 time-varying version. 
 Both were designed for Tensorflow version 1.15 which 
 substantially differs from the newer version.
-The list of the versions of the key libraries is below:
+The key libraries and their versions used in the analysis are:
 * absl-py                1.4.0 
 * matplotlib             3.3.4 
 * numpy                  1.19.5 
@@ -58,12 +58,12 @@ The list of the versions of the key libraries is below:
 
 More details could be found in [requirements_tf_1_15](requirements_tf_1_15.txt).
 
-Depending on the flag `pre_initialize_parameters` you have four options:
+The flag `pre_initialize_parameters` provides four options:
 * `random` - initialize model parameters completely at random, which we do not recommend,
-* `NMF` - initialize the location parameters for documents and objective topics by performing Non-negative Matrix Factorisation (NMF) first, 
+* `NMF` - initialize the location parameters for documents and objective topics by performing Non-negative Matrix Factorisation (NMF), 
 we use `NMF` from `sklearn.decomposition`:
   * used for the first time period (session),
-* `PF` - initialize the location parameters for documents and objective topics by performing Poisson Factorization (PF) first, 
+* `PF` - initialize the location parameters for documents and objective topics by performing Poisson Factorization (PF), 
 where the implementation from [tbip](https://github.com/keyonvafa/tbip) is used:
   * alternative initialization of the first time period (session),
 * `previous` - for time period `t` initialize model parameters by estimates from the previous time period `t-1`:
@@ -72,14 +72,14 @@ where the implementation from [tbip](https://github.com/keyonvafa/tbip) is used:
   * use objective topic locations as a fixed parameter in `non_negative_factorization` from `sklearn.decomposition`
 to find reasonable initial values for document locations.
 
-Congressional speeches dataset is quite large to be run on personal computer.
-Computational cluster with GPU has been used to perform the estimation.
-For completion, in directory [code/create_slurms](code/create_slurms) 
-we provide a code to make `.slurm` files for submitting the individual jobs.
+The Congressional speeches dataset is quite large, making it difficult to run the analysis on a personal computer.
+A compute cluster with GPU support has been used to perform the estimation.
+In directory [code/create_slurms](code/create_slurms) 
+we provide code to make `.slurm` files for submitting the individual jobs.
 In these scripts we carefully specify that the first session has to be initialized 
 with NMF/PF and the other sessions with the results from the previous session.
 A file for submitting all jobs at once uses `--dependency=singleton` to compute only one job at a time 
-so that results from the previous session ready for initialization.
+so that results from the previous session are ready for initialization.
 
 The output `param` directory will contain the following files:
 * `document_loc.npy` - location parameter for document intensities (theta),
@@ -100,11 +100,11 @@ The output `param` directory will contain the following files:
 The directory [code/analysis](code/analysis) contains numbered 
 python scripts that process the outputs from all sessions.
 
-First file, [01_analysis](code/analysis/01_analysis.py) resaves the outputs into csv: `thetas` (log scale), `betas` (exp scale), `etas` (log scale), 
+The first file, [01_analysis](code/analysis/01_analysis.py), resaves the outputs into csv files: `thetas` (log scale), `betas` (exp scale), `etas` (log scale), 
 but sorted according to the importance for each topic. 
 Moreover, it gathers some data from all sessions into one dataset:
 * `ideal_point_speakers.csv` - ideal points for all speakers separately for each session,
-* `ideal_points_all_sessions.csv` - ideal points for all speakers and all sessions combined (empty if speaker not present),
+* `ideal_points_all_sessions.csv` - ideal points for all speakers and all sessions combined (empty if a speaker is not present),
 * `speeches_by_speaker.csv` - data on speeches included within the analysis including information about the speakers,
 * `speeches_by_preprocessed_speakers` - number of speeches given by a speaker in each session,
 * `posneg_cs.csv` - cosine similarity between positive and negative topics for each topic and session.
@@ -113,7 +113,7 @@ Python script [02_plots.py](code/analysis/02_plots.py) creates descriptive plots
 * boxplots of democratic and republican senator ideological positions in time,
 * the evolution of the average partisanship (difference between means of democratic and republican positions) in time,
 * averaged cosine similarities of positive, neutral and negative topics in time,
-* wordclouds containing top 20 terms used by Republican and Democrat for each topic,
+* wordclouds containing top 20 terms used by Republicans and Democrats for each topic,
 * wordclouds of top 20 neutral terms. 
 
 R script [02_plots.R](code/analysis/02_plots.R) creates nice plots with `ggplot2`:
@@ -121,9 +121,9 @@ R script [02_plots.R](code/analysis/02_plots.R) creates nice plots with `ggplot2
 * average partisanship in time (difference between positions of Democrats and Republicans).
 
 File [03_influential_speeches](code/analysis/03_influential_speeches.py) finds the most influential speeches for selected senators. 
-The influence is measured in terms of log-likelihood ratio test statistic for testing ideal point to be zero.
+The influence is measured in terms of the log-likelihood ratio test statistic for testing whether the ideal point is zero.
 
-File [04_list_top_bigrams](code/analysis/04_list_top_bigrams.py) creates csv files containing top 10 terms for each topic. 
+File [04_list_top_bigrams](code/analysis/04_list_top_bigrams.py) creates csv files containing the top 10 terms for each topic. 
 It is based on objective topics + (-1,0,1) ideological topics:
 * `negative_10_bigrams.csv` - terms used by speaker of ideological position -1,
 * `neutral_10_bigrams.csv` - terms used by a neutral speaker (zero ideological position),
@@ -132,40 +132,40 @@ It is based on objective topics + (-1,0,1) ideological topics:
 ### Simulation study
 
 Our simulation study uses the estimated parameters from the analysis of Congressional speeches
-to generate dataset of the same magnitude under different ideological positions of the speakers.
+to generate datasets of the same size under different scenarios for the ideological positions of the speakers.
 
 #### Generating counts + exploration
 
-Directory [code/simulation](code/simulation) contains script
+Directory [code/simulation](code/simulation) contains the script
 [simulate_counts](code/simulation/simulate_counts.py) 
 for generating the counts and 
 [explore_sampled_counts](code/simulation/explore_sampled_counts.py)
 to judge the reasonability of the sampled counts. 
-After many trials and errors we settled down with the following approach.
+After some trial and error we settled on the following approach.
 
-For each time period, we need the corresponding 
+For each time period, we use the corresponding 
 document intensities (theta) from file `thetas.csv`,
 objective topics (beta) from file `neutral_topic_mean.npy`, (not `betas.csv` due to shuffling),
 ideological topics (eta) either from `ideological_topic_loc.npy` or restored from `negative_topic_mean.npy` and `positive_topic_mean.npy`, (not `etas.csv` due to shuffling).
-Since some values of eta were too extreme we decided to winsorize them into interval [-1, 1], i.e.,
+Since some values of eta were quite extreme we decided to winsorize them to the interval [-1, 1], i.e.,
 values lower than -1 became -1 and
 values higher than 1 became 1.
-All of these are on log scale so the Poisson rates are reconstructed as
-`exp(theta + beta + eta * ideal)`, where `ideal` is constructed in 4 different scenarios:
+All of these are on the log scale so the Poisson rates are reconstructed as
+`exp(theta + beta + eta * ideal)`, where `ideal` is constructed according to 4 different scenarios:
 * `zero` - all ideal points are zero,
 * `party` - ideal point is -0.5 for Republicans, 0.5 for Democrats and 0 for Independent senators,
 * `diverge` - zero ideal points until session 100, then increase or decrease by 0.05 for each additional session towards the political party,
 * `estimate` - use the estimated ideological positions for corresponding session.
 
-Note that for the generating we already used a newer version of Tensorflow,
+Note that for this part we already used a newer version of Tensorflow,
 see [requirements_tf_TBIP](requirements_tf_TBIP.txt).
 
 #### Estimating TVTBIP on simulated data
 
-All computations were also performed on a computational cluster.
+All computations were also performed on a compute cluster.
 Hence, we provide file [simulation](code/create_slurms/simulation.py)
 to create all `slurm` files needed to submit a job.
-These will be saved in `slurm/simulation-scenario/` directory.
+These are saved in the directory `slurm/simulation-scenario/`.
 To run all of them submit `run_all_97_114.slurm`, which estimates
 TBIP for a given session only after TBIP for the previous session has been estimated.
 
@@ -188,9 +188,9 @@ one csv file for all sessions
 saved in common folder to all scenarios
 [data/simulation](data/simulation).
 
-Having all the estimated ideological position at one place,
-we could continue with plotting the difference between
-Democrat and Republican senators, see
+Having all the estimated ideological positions in one place,
+we continued with plotting the difference between
+Democrat and Republican Senators, see
 [02_plots](code/simulation/02_plots.py). 
 We have also used R and ggplot2 to produce nicer plots with
 [03_plots](code/simulation/03_plots.R).
