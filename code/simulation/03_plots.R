@@ -16,6 +16,10 @@ max_session = 114
 
 DF3 <- part <- list()
 
+# whether to switch the meaning of having + or - ideological position 
+reverse_RD <- c(FALSE, TRUE, FALSE, FALSE)
+names(reverse_RD) <- data_names
+
 for(data_name in data_names){
 
   DF <- read.csv(paste0(SIM, data_name, "_ideal_points_all_sessions_rescaledIQR.csv"),
@@ -36,6 +40,11 @@ for(data_name in data_names){
                  values_to = "IdealPoint",
                  names_prefix = "ip",
                  values_drop_na = TRUE)
+  
+  # Switch the meaning of + and - if necessary
+  if(reverse_RD[data_name]){
+    DF2$IdealPoint <- -DF2$IdealPoint
+  }
 
   # convert session to numeric
   DF2$Session <- factor(DF2$Session, levels = 97:max_session, ordered = TRUE)

@@ -109,12 +109,16 @@ Moreover, it gathers some data from all sessions into one dataset:
 * `speeches_by_preprocessed_speakers` - number of speeches given by a speaker in each session,
 * `posneg_cs.csv` - cosine similarity between positive and negative topics for each topic and session.
 
-File [02_plots](code/analysis/02_plots.py) creates descriptive plots such as:
+Python script [02_plots.py](code/analysis/02_plots.py) creates descriptive plots such as:
 * boxplots of democratic and republican senator ideological positions in time,
 * the evolution of the average partisanship (difference between means of democratic and republican positions) in time,
 * averaged cosine similarities of positive, neutral and negative topics in time,
 * wordclouds containing top 20 terms used by Republican and Democrat for each topic,
 * wordclouds of top 20 neutral terms. 
+
+R script [02_plots.R](code/analysis/02_plots.R) creates nice plots with `ggplot2`:
+* boxplots of ideological positions for each session distinguished by political party,
+* average partisanship in time (difference between positions of Democrats and Republicans).
 
 File [03_influential_speeches](code/analysis/03_influential_speeches.py) finds the most influential speeches for selected senators. 
 The influence is measured in terms of log-likelihood ratio test statistic for testing ideal point to be zero.

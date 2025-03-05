@@ -126,6 +126,7 @@ plt.xlabel('Senate Session')
 plt.savefig(os.path.join(plot_dir, 'ideal_points_boxplot.pdf'), bbox_inches='tight')   # uncomment to save figure
 plt.tight_layout()
 
+
 # Average partisanship plot
 # Defined as absolute difference between means of ideal points for R and D members of each session
 
