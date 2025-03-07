@@ -1,6 +1,10 @@
 # Time Varying Text-Based Ideal Point Model
 Source code for the paper: 
-[Revisiting Group Differences in High-Dimensional Choices: Methods and Application to Congressional Speech by Paul Hofmarcher, Jan Vávra, Sourav Adhikari, and Bettina Grün (2025)](https://arxiv.org/abs/2206.10877v2).
+[Revisiting Group Differences in High-Dimensional Choices: Methods and Application to Congressional Speech by Paul Hofmarcher, Jan Vávra, Sourav Adhikari, and Bettina Grün (2025)](https://arxiv.org/abs/2206.10877v2),
+which combines ideas of topic models and ideal point models to analyze the change in partisanship in US Congress over time.
+
+
+
 
 This repository contains the code for
 * preprocessing the [Hein-Daily](https://data.stanford.edu/congress_text) dataset of congressional speeches,
